@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_notes/models/note_model.dart';
 import 'package:flutter_notes/screens/create_note.dart';
+import 'login_screen.dart';
 import 'package:flutter_notes/widgets/note_card.dart';
-import 'package:flutter_slidable/flutter_slidable.dart'; // Your existing import
 
 class HomeScreen extends StatefulWidget {
   // ADDED: Callback to allow HomeScreen to change the app's theme
@@ -48,6 +48,17 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             },
           ),
+          IconButton(
+            icon: const Icon(
+              Icons.account_circle,
+              size: 30,
+            ),
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => LoginScreen(),
+              ));
+            },
+          )
         ],
       ),
       body: ListView.builder(
