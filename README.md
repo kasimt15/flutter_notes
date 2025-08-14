@@ -1,6 +1,9 @@
 # flutter_notes
 
-A new Flutter project.
+This is my first Flutter project called Flutter Notes, a simple note taking app that connects to a PostGres database and with a backend built on Django. Whenever a use logs in and creates/edit note it gets send to the database and notes can also be retrieved and displayed in the frontend, also that feature is a work in progress.
+
+## Requirements needed:
+I cannot remember before i did not document unfortunately, my next project will have project documentation however.
 
 ## Getting Started
 
