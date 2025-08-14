@@ -1,11 +1,16 @@
 //import 'dart:ui';
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_notes/models/note_model.dart';
 //import 'package:flutter_notes/screens/home_screen.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, required this.notes});
+  final notes;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -16,6 +21,13 @@ class _LoginScreenState extends State<LoginScreen> {
   String? pictureURL;
   String? email, buttonMessage;
   bool isVisibleSignIn= true, isVisibleSignOut= false;
+
+  @override
+  void initState() {
+    super.initState();
+    checkCurrentUser();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,12 +73,19 @@ class _LoginScreenState extends State<LoginScreen> {
                     if(isLogged){
                       setState(() {
                       final user= FirebaseAuth.instance.currentUser;
-                  
+
+                      /*originUser?.photoURL= user?.photoURL;
+                      originUser?.name= user?.displayName;
+                      originUser?.email= user?.email;*/
                       pictureURL= user?.photoURL;
                       name= user?.displayName;
                       email= user?.email;
                       isVisibleSignIn= false;
                       isVisibleSignOut= true;
+                      List<Note> notes= widget.notes;
+                      //sync_notes_from_backend(notes);
+                      addUserToModel();
+                      print("after function");
                       });
                     }
                     
@@ -95,6 +114,34 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
+  void checkCurrentUser(){
+  final user = FirebaseAuth.instance.currentUser;
+  if (user!= null){
+    pictureURL= user.photoURL;
+    name= user.displayName;
+    email= user.email;
+    isVisibleSignIn= false;
+    isVisibleSignOut= true;
+  }
+}
+
+  /*Future<List<Note>> sync_notes_from_backend(List<Note> notes)async{
+    String jsonified_notes= jsonEncode(notes.map((note)=> note.toJson()).toList());
+    final url= Uri.parse("http://192.168.100.128:8000/sync/notes/");
+    try{
+      final response= await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonified_notes,
+      );
+    }
+    catch(e, stack){
+      print("error: $e");
+    }
+    print(jsonified_notes);
+  }*/
+
 }
 
 Future<bool> login()async{
@@ -132,4 +179,22 @@ Future<void> logout() async{
     return;
   }
   
+}
+
+Future<void> addUserToModel() async{
+  final userToken= await FirebaseAuth.instance.currentUser!.getIdToken();
+  final url=  Uri.parse("insert-your-base-url/create/user/");
+  try{
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'id_token': userToken}),
+    );
+    print(response.body);
+  }catch(e, stack){
+    print("token error: $e");
+    print(stack);
+    return;
+  }
+
 }

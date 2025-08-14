@@ -41,8 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
               // Toggle logic: dark -> system -> light -> dark
               if (widget.currentThemeMode == ThemeMode.light) {
                 widget.setThemeMode(ThemeMode.dark); // Switch to dark
-              } else if (widget.currentThemeMode == ThemeMode.dark) {
-                widget.setThemeMode(ThemeMode.system); // Switch to system
               } else {
                 widget.setThemeMode(ThemeMode.light); // Switch to light
               }
@@ -55,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => LoginScreen(),
+                builder: (context) => LoginScreen(notes: notes,),
               ));
             },
           )
